@@ -197,10 +197,10 @@ class _HomePageState extends ConsumerState<HomePage> {
         const Text('Публикации:', style: TextStyle(fontWeight: FontWeight.bold)),
         ...categories!.map((cat) => ListTile(
           title: Text(cat.categoryName),
-          subtitle: Text(cat.id),
+          subtitle: Text(cat.id.toString()),
           onTap: () {
             setState(() {
-              selectedPublicationId = cat.id;
+              selectedPublicationId = cat.id.toString();
               datasets = null;
               yearsResponse = null;
               dataResponse = null;
@@ -218,10 +218,10 @@ class _HomePageState extends ConsumerState<HomePage> {
         const Text('Датасеты:', style: TextStyle(fontWeight: FontWeight.bold)),
         ...datasets!.map((ds) => ListTile(
           title: Text(ds.name ?? 'Без имени'),
-          subtitle: Text(ds.id),
+          subtitle: Text(ds.id.toString()),
           onTap: () {
             setState(() {
-              selectedDatasetId = ds.id;
+              selectedDatasetId = ds.id.toString();
               yearsResponse = null;
               dataResponse = null;
             });

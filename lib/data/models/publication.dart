@@ -4,7 +4,7 @@ part 'publication.g.dart';
 
 @JsonSerializable()
 class Publication {
-  final String id;
+  final int id;
   @JsonKey(name: 'category_name')
   final String categoryName;
 

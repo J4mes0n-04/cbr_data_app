@@ -4,7 +4,7 @@ part 'dataset.g.dart';
 
 @JsonSerializable()
 class Dataset {
-  final String id;
+  final int id;
   final String name;
   final int type;
 

@@ -4,7 +4,7 @@ part 'measure.g.dart';
 
 @JsonSerializable()
 class Measure {
-  final String id;
+  final int id;
   final String name;
 
   Measure({required this.id, required this.name});

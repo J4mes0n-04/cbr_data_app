@@ -7,7 +7,7 @@ part of 'publication.dart';
 // **************************************************************************
 
 Publication _$PublicationFromJson(Map<String, dynamic> json) => Publication(
-      id: json['id'] as String,
+      id: (json['id'] as num).toInt(),
       categoryName: json['category_name'] as String,
     );
 

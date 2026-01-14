@@ -7,7 +7,7 @@ part of 'dataset.dart';
 // **************************************************************************
 
 Dataset _$DatasetFromJson(Map<String, dynamic> json) => Dataset(
-      id: json['id'] as String,
+      id: (json['id'] as num).toInt(),
       name: json['name'] as String,
       type: (json['type'] as num).toInt(),
     );

@@ -7,7 +7,7 @@ part of 'measure.dart';
 // **************************************************************************
 
 Measure _$MeasureFromJson(Map<String, dynamic> json) => Measure(
-      id: json['id'] as String,
+      id: (json['id'] as num).toInt(),
       name: json['name'] as String,
     );
 
