@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cbr_data_app/presentation/pages/home_page.dart';
 
@@ -13,6 +14,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'CBR Data App',
+      debugShowCheckedModeBanner: false,
+      locale: const Locale('ru', 'RU'),
+      supportedLocales: const [Locale('ru', 'RU')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
