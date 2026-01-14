@@ -49,24 +49,27 @@ class _HomePageState extends ConsumerState<HomePage> {
             if (errorMessage != null)
               Text('Ошибка: $errorMessage', style: const TextStyle(color: Colors.red)),
             const SizedBox(height: 20),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: () => _getCategories(repository),
-              child: const Text('Получить публикации'),
+              icon: const Icon(Icons.list),
+              label: const Text('Получить публикации'),
             ),
             if (categories != null) _buildCategoriesList(),
             const SizedBox(height: 20),
             if (selectedPublicationId != null) ...[
-              ElevatedButton(
+              ElevatedButton.icon(
                 onPressed: () => _getDatasets(repository, selectedPublicationId!),
-                child: const Text('Получить датасеты'),
+                icon: const Icon(Icons.table_chart),
+                label: const Text('Получить датасеты'),
               ),
               if (datasets != null) _buildDatasetsList(),
             ],
             const SizedBox(height: 20),
             if (selectedDatasetId != null) ...[
-              ElevatedButton(
+              ElevatedButton.icon(
                 onPressed: () => _getYears(repository, selectedDatasetId!),
-                child: const Text('Получить годы'),
+                icon: const Icon(Icons.calendar_today),
+                label: const Text('Получить годы'),
               ),
               if (yearsResponse != null) _buildYearsInfo(),
             ],
@@ -92,9 +95,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                   });
                 },
               ),
-              ElevatedButton(
+              ElevatedButton.icon(
                 onPressed: () => _getData(repository),
-                child: const Text('Получить данные'),
+                icon: const Icon(Icons.download),
+                label: const Text('Получить данные'),
               ),
               if (dataResponse != null) _buildDataInfo(),
             ],
@@ -200,103 +204,127 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   Widget _buildCategoriesList() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Публикации:', style: TextStyle(fontWeight: FontWeight.bold)),
-        DataTable(
-          columns: const [
-            DataColumn(label: Text('ID')),
-            DataColumn(label: Text('Название')),
-            DataColumn(label: Text('Выбрать')),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Публикации:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            const SizedBox(height: 10),
+            DataTable(
+              columns: const [
+                DataColumn(label: Text('ID')),
+                DataColumn(label: Text('Название')),
+                DataColumn(label: Text('Выбрать')),
+              ],
+              rows: categories!.map((cat) => DataRow(
+                cells: [
+                  DataCell(Text(cat.id.toString())),
+                  DataCell(Text(cat.categoryName)),
+                  DataCell(ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        selectedPublicationId = cat.id.toString();
+                        datasets = null;
+                        yearsResponse = null;
+                        dataResponse = null;
+                      });
+                    },
+                    child: const Text('Выбрать'),
+                  )),
+                ],
+              )).toList(),
+            ),
           ],
-          rows: categories!.map((cat) => DataRow(
-            cells: [
-              DataCell(Text(cat.id.toString())),
-              DataCell(Text(cat.categoryName)),
-              DataCell(ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    selectedPublicationId = cat.id.toString();
-                    datasets = null;
-                    yearsResponse = null;
-                    dataResponse = null;
-                  });
-                },
-                child: const Text('Выбрать'),
-              )),
-            ],
-          )).toList(),
         ),
-      ],
+      ),
     );
   }
 
   Widget _buildDatasetsList() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Датасеты:', style: TextStyle(fontWeight: FontWeight.bold)),
-        DataTable(
-          columns: const [
-            DataColumn(label: Text('ID')),
-            DataColumn(label: Text('Название')),
-            DataColumn(label: Text('Тип')),
-            DataColumn(label: Text('Выбрать')),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Датасеты:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            const SizedBox(height: 10),
+            DataTable(
+              columns: const [
+                DataColumn(label: Text('ID')),
+                DataColumn(label: Text('Название')),
+                DataColumn(label: Text('Тип')),
+                DataColumn(label: Text('Выбрать')),
+              ],
+              rows: datasets!.map((ds) => DataRow(
+                cells: [
+                  DataCell(Text(ds.id.toString())),
+                  DataCell(Text(ds.name ?? 'Без имени')),
+                  DataCell(Text(ds.type.toString())),
+                  DataCell(ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        selectedDatasetId = ds.id.toString();
+                        yearsResponse = null;
+                        dataResponse = null;
+                      });
+                    },
+                    child: const Text('Выбрать'),
+                  )),
+                ],
+              )).toList(),
+            ),
           ],
-          rows: datasets!.map((ds) => DataRow(
-            cells: [
-              DataCell(Text(ds.id.toString())),
-              DataCell(Text(ds.name ?? 'Без имени')),
-              DataCell(Text(ds.type.toString())),
-              DataCell(ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    selectedDatasetId = ds.id.toString();
-                    yearsResponse = null;
-                    dataResponse = null;
-                  });
-                },
-                child: const Text('Выбрать'),
-              )),
-            ],
-          )).toList(),
         ),
-      ],
+      ),
     );
   }
 
   Widget _buildYearsInfo() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Годы:', style: TextStyle(fontWeight: FontWeight.bold)),
-        Text('От: ${yearsResponse!.minYear}'),
-        Text('До: ${yearsResponse!.maxYear}'),
-      ],
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Годы:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            const SizedBox(height: 10),
+            Text('От: ${yearsResponse!.minYear}'),
+            Text('До: ${yearsResponse!.maxYear}'),
+          ],
+        ),
+      ),
     );
   }
 
   Widget _buildDataInfo() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Данные:', style: TextStyle(fontWeight: FontWeight.bold)),
-        Text('Количество записей: ${dataResponse!.rawData.length}'),
-        if (dataResponse!.rawData.isNotEmpty)
-          DataTable(
-            columns: const [
-              DataColumn(label: Text('Дата')),
-              DataColumn(label: Text('Значение')),
-            ],
-            rows: dataResponse!.rawData.map((data) => DataRow(
-              cells: [
-                DataCell(Text(data.dt)),
-                DataCell(Text(data.obsVal.toString())),
-              ],
-            )).toList(),
-          ),
-      ],
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Данные:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            const SizedBox(height: 10),
+            Text('Количество записей: ${dataResponse!.rawData.length}'),
+            if (dataResponse!.rawData.isNotEmpty)
+              DataTable(
+                columns: const [
+                  DataColumn(label: Text('Дата')),
+                  DataColumn(label: Text('Значение')),
+                ],
+                rows: dataResponse!.rawData.map((data) => DataRow(
+                  cells: [
+                    DataCell(Text(data.dt)),
+                    DataCell(Text(data.obsVal.toString())),
+                  ],
+                )).toList(),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }
