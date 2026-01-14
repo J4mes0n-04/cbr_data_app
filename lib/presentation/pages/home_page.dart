@@ -83,6 +83,15 @@ class _HomePageState extends ConsumerState<HomePage> {
                 decoration: const InputDecoration(labelText: 'Год окончания (y2)'),
                 keyboardType: TextInputType.number,
               ),
+              SwitchListTile(
+                title: const Text('Использовать dataEx'),
+                value: useDataEx,
+                onChanged: (value) {
+                  setState(() {
+                    useDataEx = value;
+                  });
+                },
+              ),
               ElevatedButton(
                 onPressed: () => _getData(repository),
                 child: const Text('Получить данные'),
@@ -195,18 +204,30 @@ class _HomePageState extends ConsumerState<HomePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Публикации:', style: TextStyle(fontWeight: FontWeight.bold)),
-        ...categories!.map((cat) => ListTile(
-          title: Text(cat.categoryName),
-          subtitle: Text(cat.id.toString()),
-          onTap: () {
-            setState(() {
-              selectedPublicationId = cat.id.toString();
-              datasets = null;
-              yearsResponse = null;
-              dataResponse = null;
-            });
-          },
-        )),
+        DataTable(
+          columns: const [
+            DataColumn(label: Text('ID')),
+            DataColumn(label: Text('Название')),
+            DataColumn(label: Text('Выбрать')),
+          ],
+          rows: categories!.map((cat) => DataRow(
+            cells: [
+              DataCell(Text(cat.id.toString())),
+              DataCell(Text(cat.categoryName)),
+              DataCell(ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    selectedPublicationId = cat.id.toString();
+                    datasets = null;
+                    yearsResponse = null;
+                    dataResponse = null;
+                  });
+                },
+                child: const Text('Выбрать'),
+              )),
+            ],
+          )).toList(),
+        ),
       ],
     );
   }
@@ -216,17 +237,31 @@ class _HomePageState extends ConsumerState<HomePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Датасеты:', style: TextStyle(fontWeight: FontWeight.bold)),
-        ...datasets!.map((ds) => ListTile(
-          title: Text(ds.name ?? 'Без имени'),
-          subtitle: Text(ds.id.toString()),
-          onTap: () {
-            setState(() {
-              selectedDatasetId = ds.id.toString();
-              yearsResponse = null;
-              dataResponse = null;
-            });
-          },
-        )),
+        DataTable(
+          columns: const [
+            DataColumn(label: Text('ID')),
+            DataColumn(label: Text('Название')),
+            DataColumn(label: Text('Тип')),
+            DataColumn(label: Text('Выбрать')),
+          ],
+          rows: datasets!.map((ds) => DataRow(
+            cells: [
+              DataCell(Text(ds.id.toString())),
+              DataCell(Text(ds.name ?? 'Без имени')),
+              DataCell(Text(ds.type.toString())),
+              DataCell(ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    selectedDatasetId = ds.id.toString();
+                    yearsResponse = null;
+                    dataResponse = null;
+                  });
+                },
+                child: const Text('Выбрать'),
+              )),
+            ],
+          )).toList(),
+        ),
       ],
     );
   }
@@ -248,7 +283,19 @@ class _HomePageState extends ConsumerState<HomePage> {
       children: [
         const Text('Данные:', style: TextStyle(fontWeight: FontWeight.bold)),
         Text('Количество записей: ${dataResponse!.rawData.length}'),
-        // Здесь можно добавить график или таблицу
+        if (dataResponse!.rawData.isNotEmpty)
+          DataTable(
+            columns: const [
+              DataColumn(label: Text('Дата')),
+              DataColumn(label: Text('Значение')),
+            ],
+            rows: dataResponse!.rawData.map((data) => DataRow(
+              cells: [
+                DataCell(Text(data.dt)),
+                DataCell(Text(data.obsVal.toString())),
+              ],
+            )).toList(),
+          ),
       ],
     );
   }

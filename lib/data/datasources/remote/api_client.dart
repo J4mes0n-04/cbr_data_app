@@ -5,7 +5,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 
-import '../../../../core/constants/api_constants.dart';
+import '../../../../core/constants/constants.dart.dart';
 import '../../models/publication.dart';
 import '../../models/dataset.dart';
 import '../../models/measure.dart';
@@ -14,7 +14,7 @@ import '../../models/data_response.dart';
 
 class ApiClient {
   final http.Client _client;
-  final Duration timeout = ApiConstants.timeout;
+  final Duration timeout = Constants.timeout;
   final bool useMockData;
 
   ApiClient(this._client, {this.useMockData = false});
@@ -65,10 +65,10 @@ class ApiClient {
   }
 
   Future<dynamic> _get(String endpoint) async {
-    final url = Uri.parse('${ApiConstants.baseUrl}$endpoint');
+    final url = Uri.parse('${Constants.baseUrl}$endpoint');
     
     try {
-      final response = await _client.get(url).timeout(timeout);
+      final response = await _client.get(url, headers: {'Accept-Encoding': 'gzip'}).timeout(timeout);
       
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
@@ -90,16 +90,16 @@ class ApiClient {
   // Mock data methods
   List<Publication> _getMockPublications() {
     return [
-      Publication(id: '1', categoryName: 'Курсы валют'),
-      Publication(id: '2', categoryName: 'Ставки'),
-      Publication(id: '3', categoryName: 'Показатели'),
+      Publication(id: 1, categoryName: 'Курсы валют'),
+      Publication(id: 2, categoryName: 'Ставки'),
+      Publication(id: 3, categoryName: 'Показатели'),
     ];
   }
 
   List<Dataset> _getMockDatasets() {
     return [
-      Dataset(id: '1', name: 'Дневные курсы', type: 1),
-      Dataset(id: '2', name: 'Месячные курсы', type: 2),
+      Dataset(id: 1, name: 'Дневные курсы', type: 1),
+      Dataset(id: 2, name: 'Месячные курсы', type: 2),
     ];
   }
 

@@ -1,2 +1,4 @@
-const String baseUrl = 'https://api.cbr.ru';  // Предполагаемый; уточните по документации ЦБ РФ
-const Duration apiTimeout = Duration(seconds: 30);
+class Constants {
+  static const String baseUrl = 'http://www.cbr.ru/dataservice';  // Предполагаемый; уточните по документации ЦБ РФ   
+  static const Duration timeout = Duration(seconds: 30);
+}
