@@ -18,12 +18,8 @@ class DataRepository {
     return await apiClient.getDatasets(publicationId);
   }
 
-  Future<MeasuresResponse> getMeasures(String datasetId) async {
-    return await apiClient.getMeasures(datasetId);
-  }
-
-  Future<YearsResponse> getYears(String datasetId, String measureId) async {
-    return await apiClient.getYears(datasetId, measureId);
+  Future<YearsResponse> getYears(String datasetId) async {
+    return await apiClient.getYears(datasetId);
   }
 
   Future<DataResponse> getData({
@@ -31,8 +27,16 @@ class DataRepository {
     required int y2,
     required String publicationId,
     required String datasetId,
-    required String measureId,
   }) async {
-    return await apiClient.getData(y1, y2, publicationId, datasetId, measureId);
+    return await apiClient.getData(y1, y2, publicationId, datasetId);
+  }
+
+  Future<DataResponse> getDataEx({
+    required int y1,
+    required int y2,
+    required String publicationId,
+    required String datasetId,
+  }) async {
+    return await apiClient.getDataEx(y1, y2, publicationId, datasetId);
   }
 }

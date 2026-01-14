@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cbr_data_app/presentation/providers/providers.dart';
 import 'package:cbr_data_app/data/models/publication.dart';
 import 'package:cbr_data_app/data/models/dataset.dart';
-import 'package:cbr_data_app/data/models/measure.dart';
 import 'package:cbr_data_app/data/models/years.dart';
 import 'package:cbr_data_app/data/models/data_response.dart';
 import 'package:cbr_data_app/data/repositories/data_repository.dart';
@@ -18,13 +17,12 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   List<Publication>? categories;
   List<Dataset>? datasets;
-  MeasuresResponse? measuresResponse;
   YearsResponse? yearsResponse;
   DataResponse? dataResponse;
 
   String? selectedPublicationId;
   String? selectedDatasetId;
-  String? selectedMeasureId;
+  bool useDataEx = false; // false = обычный data, true = dataEx
   int? y1;
   int? y2;
 
@@ -67,21 +65,13 @@ class _HomePageState extends ConsumerState<HomePage> {
             const SizedBox(height: 20),
             if (selectedDatasetId != null) ...[
               ElevatedButton(
-                onPressed: () => _getMeasures(repository, selectedDatasetId!),
-                child: const Text('Получить меры'),
-              ),
-              if (measuresResponse != null) _buildMeasuresList(),
-            ],
-            const SizedBox(height: 20),
-            if (selectedDatasetId != null && selectedMeasureId != null) ...[
-              ElevatedButton(
-                onPressed: () => _getYears(repository, selectedDatasetId!, selectedMeasureId!),
+                onPressed: () => _getYears(repository, selectedDatasetId!),
                 child: const Text('Получить годы'),
               ),
               if (yearsResponse != null) _buildYearsInfo(),
             ],
             const SizedBox(height: 20),
-            if (selectedPublicationId != null && selectedDatasetId != null && selectedMeasureId != null) ...[
+            if (selectedPublicationId != null && selectedDatasetId != null) ...[
               const Text('Годы:'),
               TextField(
                 controller: y1Controller,
@@ -140,29 +130,13 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
   }
 
-  void _getMeasures(DataRepository repository, String datasetId) async {
+  void _getYears(DataRepository repository, String datasetId) async {
     setState(() {
       isLoading = true;
       errorMessage = null;
     });
     try {
-      measuresResponse = await repository.getMeasures(datasetId);
-    } catch (e) {
-      errorMessage = e.toString();
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  void _getYears(DataRepository repository, String datasetId, String measureId) async {
-    setState(() {
-      isLoading = true;
-      errorMessage = null;
-    });
-    try {
-      yearsResponse = await repository.getYears(datasetId, measureId);
+      yearsResponse = await repository.getYears(datasetId);
     } catch (e) {
       errorMessage = e.toString();
     } finally {
@@ -192,13 +166,21 @@ class _HomePageState extends ConsumerState<HomePage> {
       errorMessage = null;
     });
     try {
-      dataResponse = await repository.getData(
-        y1: y1!,
-        y2: y2!,
-        publicationId: selectedPublicationId!,
-        datasetId: selectedDatasetId!,
-        measureId: selectedMeasureId!,
-      );
+      if (useDataEx) {
+        dataResponse = await repository.getDataEx(
+          y1: y1!,
+          y2: y2!,
+          publicationId: selectedPublicationId!,
+          datasetId: selectedDatasetId!,
+        );
+      } else {
+        dataResponse = await repository.getData(
+          y1: y1!,
+          y2: y2!,
+          publicationId: selectedPublicationId!,
+          datasetId: selectedDatasetId!,
+        );
+      }
     } catch (e) {
       errorMessage = e.toString();
     } finally {
@@ -220,7 +202,6 @@ class _HomePageState extends ConsumerState<HomePage> {
             setState(() {
               selectedPublicationId = cat.id;
               datasets = null;
-              measuresResponse = null;
               yearsResponse = null;
               dataResponse = null;
             });
@@ -241,27 +222,6 @@ class _HomePageState extends ConsumerState<HomePage> {
           onTap: () {
             setState(() {
               selectedDatasetId = ds.id;
-              measuresResponse = null;
-              yearsResponse = null;
-              dataResponse = null;
-            });
-          },
-        )),
-      ],
-    );
-  }
-
-  Widget _buildMeasuresList() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Меры:', style: TextStyle(fontWeight: FontWeight.bold)),
-        ...measuresResponse!.measure.map((m) => ListTile(
-          title: Text(m.name),
-          subtitle: Text(m.id),
-          onTap: () {
-            setState(() {
-              selectedMeasureId = m.id;
               yearsResponse = null;
               dataResponse = null;
             });
