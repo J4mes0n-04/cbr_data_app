@@ -6,6 +6,7 @@ import 'package:cbr_data_app/data/models/dataset.dart';
 import 'package:cbr_data_app/data/models/measure.dart';
 import 'package:cbr_data_app/data/models/years.dart';
 import 'package:cbr_data_app/data/models/data_response.dart';
+import 'package:cbr_data_app/data/repositories/data_repository.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -110,8 +111,11 @@ class _HomePageState extends ConsumerState<HomePage> {
       errorMessage = null;
     });
     try {
+      print('Fetching categories...');
       categories = await repository.getCategories();
+      print('Categories loaded: ${categories?.length}');
     } catch (e) {
+      print('Error fetching categories: $e');
       errorMessage = e.toString();
     } finally {
       setState(() {

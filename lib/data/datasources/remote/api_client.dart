@@ -15,30 +15,51 @@ import '../../models/data_response.dart';
 class ApiClient {
   final http.Client _client;
   final Duration timeout = ApiConstants.timeout;
+  final bool useMockData;
 
-  ApiClient(this._client);
+  ApiClient(this._client, {this.useMockData = false});
 
   Future<List<Publication>> getPublications() async {
+    if (useMockData) {
+      await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
+      return _getMockPublications();
+    }
     final response = await _get('/publications');
     return (response as List).map((e) => Publication.fromJson(e)).toList();
   }
 
   Future<List<Dataset>> getDatasets(String publicationId) async {
+    if (useMockData) {
+      await Future.delayed(const Duration(seconds: 1));
+      return _getMockDatasets();
+    }
     final response = await _get('/datasets?publicationId=$publicationId');
     return (response as List).map((e) => Dataset.fromJson(e)).toList();
   }
 
   Future<MeasuresResponse> getMeasures(String datasetId) async {
+    if (useMockData) {
+      await Future.delayed(const Duration(seconds: 1));
+      return _getMockMeasures();
+    }
     final response = await _get('/measures?datasetId=$datasetId');
     return MeasuresResponse.fromJson(response);
   }
 
   Future<YearsResponse> getYears(String datasetId, String measureId) async {
+    if (useMockData) {
+      await Future.delayed(const Duration(seconds: 1));
+      return _getMockYears();
+    }
     final response = await _get('/years?datasetId=$datasetId&measureId=$measureId');
     return YearsResponse.fromJson(response);
   }
 
   Future<DataResponse> getData(int y1, int y2, String publicationId, String datasetId, String measureId) async {
+    if (useMockData) {
+      await Future.delayed(const Duration(seconds: 1));
+      return _getMockData();
+    }
     final response = await _get('/data?y1=$y1&y2=$y2&publicationId=$publicationId&datasetId=$datasetId&measureId=$measureId');
     return DataResponse.fromJson(response);
   }
@@ -64,6 +85,42 @@ class ApiClient {
       if (e is ApiError) throw e;
       throw ApiError('Неизвестная ошибка: $e');
     }
+  }
+
+  // Mock data methods
+  List<Publication> _getMockPublications() {
+    return [
+      Publication(id: '1', categoryName: 'Курсы валют'),
+      Publication(id: '2', categoryName: 'Ставки'),
+      Publication(id: '3', categoryName: 'Показатели'),
+    ];
+  }
+
+  List<Dataset> _getMockDatasets() {
+    return [
+      Dataset(id: '1', name: 'Дневные курсы', type: 1),
+      Dataset(id: '2', name: 'Месячные курсы', type: 2),
+    ];
+  }
+
+  MeasuresResponse _getMockMeasures() {
+    return MeasuresResponse(measure: [
+      Measure(id: '1', name: 'USD'),
+      Measure(id: '2', name: 'EUR'),
+      Measure(id: '3', name: 'CNY'),
+    ]);
+  }
+
+  YearsResponse _getMockYears() {
+    return YearsResponse(minYear: 2020, maxYear: 2025);
+  }
+
+  DataResponse _getMockData() {
+    return DataResponse(rawData: [
+      RawData(dt: '2024-01-01', obsVal: 90.5),
+      RawData(dt: '2024-01-02', obsVal: 95.2),
+      RawData(dt: '2024-01-03', obsVal: 92.8),
+    ]);
   }
 }
 

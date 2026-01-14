@@ -9,7 +9,7 @@ final httpClientProvider = Provider<http.Client>((ref) => http.Client());
 // Провайдер для ApiClient
 final apiClientProvider = Provider<ApiClient>((ref) {
   final client = ref.watch(httpClientProvider);
-  return ApiClient(client);
+  return ApiClient(client, useMockData: false); // Используем реальный API
 });
 
 // Провайдер для DataRepository
